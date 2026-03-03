@@ -52,7 +52,7 @@ function hubapp_notifica_output($vars) {
     $templates = [
         'InvoiceCreated' => [
             'name' => 'Fatura Gerada', 
-            'default' => 'Olá {firstname}, sua fatura #{invoiceid} de R$ {total} foi gerada. Vencimento: {duedate}. 🔗 Acesse s/ senha: {autologin_url}'
+            'default' => 'Olá {firstname}, sua fatura #{invoiceid} de R$ {total} foi gerada. Vencimento: {duedate}. ▶️ Acesse s/ senha: {autologin_url}'
         ],
         'InvoicePaid' => [
             'name' => 'Pagamento Confirmado', 
@@ -60,11 +60,11 @@ function hubapp_notifica_output($vars) {
         ],
         'InvoicePaymentReminderFirst' => [
             'name' => '1º Aviso de Atraso', 
-            'default' => '⚠️ Olá {firstname}, lembramos que a fatura #{invoiceid} venceu em {duedate}. 🚀 Pague agora s/ senha: {autologin_url}'
+            'default' => '⚠️ Olá {firstname}, lembramos que a fatura #{invoiceid} venceu em {duedate}. ⚡ Pague agora s/ senha: {autologin_url}'
         ],
         'InvoicePaymentReminderSecond' => [
             'name' => '2º Aviso de Atraso', 
-            'default' => '⚠️ Oi {firstname}, o pagamento da fatura #{invoiceid} ainda não consta. 📲 Regularize em 1 clique: {autologin_url}'
+            'default' => '⚠️ Oi {firstname}, o pagamento da fatura #{invoiceid} ainda não consta. ▶️ Regularize em 1 clique: {autologin_url}'
         ],
         'InvoicePaymentReminderThird' => [
             'name' => 'Aviso Crítico (3º)', 
@@ -72,7 +72,7 @@ function hubapp_notifica_output($vars) {
         ],
         'TicketAdminReply' => [
             'name' => 'Resposta em Ticket', 
-            'default' => 'ℹ️ Olá {firstname}, seu ticket #{ticketno} ({ticketsubject}) foi respondido. 💬 Veja direto: {autologin_url}'
+            'default' => 'ℹ️ Olá {firstname}, seu ticket #{ticketno} ({ticketsubject}) foi respondido. ✉️ Veja direto: {autologin_url}'
         ],
         'TicketOpenAdmin' => [
             'name' => 'Admin: Novo Ticket', 
@@ -80,15 +80,15 @@ function hubapp_notifica_output($vars) {
         ],
         'AfterModuleCreate' => [
             'name' => 'Serviço Ativado', 
-            'default' => '✅ Boas notícias {firstname}! Seu serviço {domain} está ativo. 🚀 Painel de Controle: {autologin_url}'
+            'default' => '✅ Boas notícias {firstname}! Seu serviço {domain} está ativo. ⭐ Painel de Controle: {autologin_url}'
         ],
         'AfterModuleSuspend' => [
             'name' => 'Serviço Suspenso', 
-            'default' => '❌ Atenção {firstname}, o serviço {domain} foi suspenso. 🔗 Reative sua conta aqui: {autologin_url}'
+            'default' => '❌ Atenção {firstname}, o serviço {domain} foi suspenso. ▶️ Reative sua conta aqui: {autologin_url}'
         ],
         'DomainRenewalNotice' => [
             'name' => 'Expiração de Domínio', 
-            'default' => 'ℹ️ Olá {firstname}, seu domínio {domain} expira em {x} dias ({expirydate}). 🔄 Renove agora: {autologin_url}'
+            'default' => 'ℹ️ Olá {firstname}, seu domínio {domain} expira em {x} dias ({expirydate}). ⚡ Renove agora: {autologin_url}'
         ],
         'AdminLogin' => [
             'name' => 'Alerta de Login Admin', 
