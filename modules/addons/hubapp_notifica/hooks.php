@@ -76,13 +76,26 @@ add_hook('InvoiceUnpaid', 1, function($vars) {
 add_hook('InvoicePaymentReminder', 1, function($vars) {
     $inv = Capsule::table('tblinvoices')->where('id', $vars['invoiceid'])->first();
     $cli = Capsule::table('tblclients')->where('id', $inv->userid)->first();
-    $type = ucfirst($vars['type']); // First, Second, Third
+    $systemUrl = Capsule::table('tblconfiguration')->where('setting', 'SystemURL')->value('value');
     
-    hubapp_dispatch('InvoicePaymentReminder' . $type, $cli->id, [
-        '{firstname}' => $cli->firstname,
-        '{invoiceid}' => $vars['invoiceid'],
-        '{duedate}' => fromMySQLDate($inv->duedate)
-    ], "INV_REM_" . strtoupper($type) . "_" . $vars['invoiceid']);
+    // Se for o aviso pré-vencimento (reminder), direciona para Fatura a Vencer (InvoiceUnpaid)
+    if ($vars['type'] == 'reminder') {
+        hubapp_dispatch('InvoiceUnpaid', $cli->id, [
+            '{firstname}' => $cli->firstname,
+            '{invoiceid}' => $vars['invoiceid'],
+            '{total}' => $inv->total,
+            '{duedate}' => fromMySQLDate($inv->duedate),
+            '{invoice_url}' => $systemUrl . "viewinvoice.php?id=" . $vars['invoiceid']
+        ], "INV_UNPAID_REM_" . $vars['invoiceid']);
+    } else {
+        // Trata os avisos de atraso: First, Second, Third
+        $type = ucfirst($vars['type']); 
+        hubapp_dispatch('InvoicePaymentReminder' . $type, $cli->id, [
+            '{firstname}' => $cli->firstname,
+            '{invoiceid}' => $vars['invoiceid'],
+            '{duedate}' => fromMySQLDate($inv->duedate)
+        ], "INV_REM_" . strtoupper($type) . "_" . $vars['invoiceid']);
+    }
 });
 
 // --- GATILHOS DE SUPORTE ---
