@@ -73,29 +73,38 @@ add_hook('InvoiceUnpaid', 1, function($vars) {
     ], "INV_UNPAID_" . $invoiceId);
 });
 
+// Lembretes de Fatura Corrigido (Incluindo Atrasos e Pré-Vencimento)
 add_hook('InvoicePaymentReminder', 1, function($vars) {
     $inv = Capsule::table('tblinvoices')->where('id', $vars['invoiceid'])->first();
     $cli = Capsule::table('tblclients')->where('id', $inv->userid)->first();
     $systemUrl = Capsule::table('tblconfiguration')->where('setting', 'SystemURL')->value('value');
     
-    // Se for o aviso pré-vencimento (reminder), direciona para Fatura a Vencer (InvoiceUnpaid)
-    if ($vars['type'] == 'reminder') {
-        hubapp_dispatch('InvoiceUnpaid', $cli->id, [
-            '{firstname}' => $cli->firstname,
-            '{invoiceid}' => $vars['invoiceid'],
-            '{total}' => $inv->total,
-            '{duedate}' => fromMySQLDate($inv->duedate),
-            '{invoice_url}' => $systemUrl . "viewinvoice.php?id=" . $vars['invoiceid']
-        ], "INV_UNPAID_REM_" . $vars['invoiceid']);
+    // Padroniza o texto que o WHMCS envia para letras minúsculas (ex: firstoverdue)
+    $type = strtolower($vars['type']);
+    
+    // Identifica o evento correto buscando a palavra-chave
+    if ($type == 'reminder') {
+        $dispatchKey = 'InvoiceUnpaid';
+        $externalKey = "INV_UNPAID_REM_" . $vars['invoiceid'];
+    } elseif (strpos($type, 'first') !== false) {
+        $dispatchKey = 'InvoicePaymentReminderFirst';
+        $externalKey = "INV_REM_FIRST_" . $vars['invoiceid'];
+    } elseif (strpos($type, 'second') !== false) {
+        $dispatchKey = 'InvoicePaymentReminderSecond';
+        $externalKey = "INV_REM_SECOND_" . $vars['invoiceid'];
     } else {
-        // Trata os avisos de atraso: First, Second, Third
-        $type = ucfirst($vars['type']); 
-        hubapp_dispatch('InvoicePaymentReminder' . $type, $cli->id, [
-            '{firstname}' => $cli->firstname,
-            '{invoiceid}' => $vars['invoiceid'],
-            '{duedate}' => fromMySQLDate($inv->duedate)
-        ], "INV_REM_" . strtoupper($type) . "_" . $vars['invoiceid']);
+        $dispatchKey = 'InvoicePaymentReminderThird';
+        $externalKey = "INV_REM_THIRD_" . $vars['invoiceid'];
     }
+
+    // Dispara a mensagem passando todas as variáveis úteis
+    hubapp_dispatch($dispatchKey, $cli->id, [
+        '{firstname}' => $cli->firstname,
+        '{invoiceid}' => $vars['invoiceid'],
+        '{total}' => $inv->total,
+        '{duedate}' => fromMySQLDate($inv->duedate),
+        '{invoice_url}' => $systemUrl . "viewinvoice.php?id=" . $vars['invoiceid']
+    ], $externalKey);
 });
 
 // --- GATILHOS DE SUPORTE ---
