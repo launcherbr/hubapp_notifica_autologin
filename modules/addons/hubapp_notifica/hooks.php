@@ -54,24 +54,9 @@ add_hook('InvoicePaid', 1, function($vars) {
     ], "INV_PAID_" . $vars['invoiceid']);
 });
 
-add_hook('InvoiceUnpaid', 1, function($vars) {
-    $invoiceId = $vars['invoiceid'];
-    $inv = Capsule::table('tblinvoices')->where('id', $invoiceId)->first();
-    
-    // Evita erro caso a fatura não seja encontrada
-    if (!$inv) return;
-    
-    $cli = Capsule::table('tblclients')->where('id', $inv->userid)->first();
-    $systemUrl = Capsule::table('tblconfiguration')->where('setting', 'SystemURL')->value('value');
-    
-    hubapp_dispatch('InvoiceUnpaid', $cli->id, [
-        '{firstname}' => $cli->firstname,
-        '{invoiceid}' => $invoiceId,
-        '{total}' => formatCurrency($inv->total), // Opcional, formata a moeda nativamente se precisar
-        '{duedate}' => fromMySQLDate($inv->duedate),
-        '{invoice_url}' => $systemUrl . "viewinvoice.php?id=" . $invoiceId
-    ], "INV_UNPAID_" . $invoiceId);
-});
+// REMOVIDO: O hook InvoiceUnpaid foi removido pois causava alertas duplicados
+// junto com a criação da fatura. O evento de "Fatura a Vencer" (Unpaid) 
+// é devidamente tratado pelo InvoicePaymentReminder via Cron Job.
 
 // Lembretes de Fatura Corrigido (Incluindo Atrasos e Pré-Vencimento)
 add_hook('InvoicePaymentReminder', 1, function($vars) {
