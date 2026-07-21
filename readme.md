@@ -125,5 +125,5 @@ O sistema de AutoLogin utiliza três camadas de proteção para garantir a segur
 
 ## 🆘 Suporte e Créditos
 
-* **Desenvolvido por**: LD | HubApp / Launcher & Co.
+* **Desenvolvido por**: LD | HubApp - Launcher Tecnologia.
 * **Suporte e Atualizações**: [licencas.digital](https://licencas.digital)
